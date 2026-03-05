@@ -59,11 +59,11 @@ jobs:
           else
             echo "Using cached ${CLANG_DIR}"
           fi
-      - name: Include KernelSU
+      - name: Include KernelSU Next
         run: |
           cd kernel_platform/xiaomi/sm8450
-          rm -rf KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+          rm -rf KernelSU drivers/kernelsu
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -
 #          cd KernelSU
 #          git fetch origin
 #          git checkout dc1f174
