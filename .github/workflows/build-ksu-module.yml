@@ -1,10 +1,10 @@
-name: build-kernelsu-module
+name: build-ksu-module
 on:
   workflow_dispatch:
 env:
   CLANG_DIR: clang-r510928
 jobs:
-  build-kernelsu-module:
+  build-ksu-module:
     runs-on: ubuntu-22.04
     steps:
       - name: Free disk space
@@ -77,6 +77,6 @@ jobs:
       - name: Upload KernelSU module artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kernelsu-module
+          name: ksu-module
           path: kernel_platform/xiaomi/sm8450/out/kernelsu.ko
           compression-level: 9
