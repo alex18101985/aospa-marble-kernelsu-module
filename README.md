@@ -1,4 +1,4 @@
-# AOSPA GKI Kernel
+# AOSPA Vauxite GKI Kernel
 ## Differences from stock AOSPA kernel:
 - Added KernelSU Next
 - Added SuSFS
