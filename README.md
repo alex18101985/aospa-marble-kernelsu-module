@@ -1,7 +1,7 @@
 # AOSPA Vauxite GKI Kernel
 ## Differences from stock AOSPA kernel:
 - Added Wild KSU
-- Added SuSFS
+- Added SUSFS
 - Added Westwood TCP (set as default)
 - Built with Clang r510928
 
