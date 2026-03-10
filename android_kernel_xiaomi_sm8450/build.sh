@@ -244,11 +244,11 @@ echo_i "Generating config..."
 m $DEFCONFIG
 m ./scripts/kconfig/merge_config.sh $DEFCONFIGS vendor/${TARGET}_GKI.config
 scripts/config --file out/.config \
-    --set-str LOCALVERSION "-AOSPA-Vauxite-GKI-WildKSU-SuSFS" \
+    --set-str LOCALVERSION "-AOSPA-Vauxite-GKI-WildKSU-SUSFS" \
     -d LOCALVERSION_AUTO
 $NO_LTO && {
     scripts/config --file out/.config \
-        --set-str LOCALVERSION "-AOSPA-Vauxite-GKI-WildKSU-SuSFS-noLTO" \
+        --set-str LOCALVERSION "-AOSPA-Vauxite-GKI-WildKSU-SUSFS-noLTO" \
         -d LTO_CLANG_FULL -e LTO_NONE
     echo_i "Disabled LTO!"
 }
