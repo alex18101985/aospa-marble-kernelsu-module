@@ -4,6 +4,8 @@ on:
 env:
   CLANG_DIR: clang-r510928
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+  KBUILD_BUILD_USER: alex
+  KBUILD_BUILD_HOST: github-build
 jobs:
   build-kernel-wildksu-susfs:
     runs-on: ubuntu-22.04
