@@ -28,7 +28,8 @@ jobs:
       - name: Increase file limit
         run: |
           sudo sysctl -w vm.swappiness=100
-      - uses: actions/checkout@v6.0.2
+      - name: Check repository
+        uses: actions/checkout@v6.0.2
         with:
           path: aospa-vauxite-gki-kernel
       - name: Setup Python
