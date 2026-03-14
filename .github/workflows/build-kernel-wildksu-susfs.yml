@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
   CLANG_DIR: clang-r510928
-#  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   KBUILD_BUILD_USER: alex
   KBUILD_BUILD_HOST: github-build
 jobs:
@@ -111,7 +110,7 @@ jobs:
         id: tag
         run: echo "release_tag=AOSPA_Vauxite_GKI_WildKSU_SUSFS_$(date +'%Y.%m.%d_%H-%M')" >> "$GITHUB_OUTPUT"
       - name: Create release
-        uses: softprops/action-gh-release@master
+        uses: softprops/action-gh-release@v2.5.0
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
