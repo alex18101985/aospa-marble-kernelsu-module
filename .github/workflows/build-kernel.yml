@@ -23,7 +23,7 @@ jobs:
       - name: Set swap space
         uses: pierotofy/set-swap-space@master
         with:
-          swap-size-gb: 10
+          swap-size-gb: 16
       - name: Increase file limit
         run: |
           sudo sysctl -w vm.swappiness=100
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6.2.0
         with:
-          python-version: 'pypy3.11'
+          python-version: '3.x'
       - name: Setup build environment
         run: |
           sudo apt-get update
