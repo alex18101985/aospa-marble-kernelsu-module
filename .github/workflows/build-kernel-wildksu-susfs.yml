@@ -2,24 +2,24 @@ name: build-kernel-wildksu-susfs
 on:
   workflow_dispatch:
 env:
-  CLANG_DIR: clang-r510928
+  CLANG_DIR: clang-r522817
   KBUILD_BUILD_USER: alex
   KBUILD_BUILD_HOST: github-build
 jobs:
   build-kernel-wildksu-susfs:
     runs-on: ubuntu-22.04
     steps:
-#      - name: Free disk space
-#        if: ${{ true }}
-#        uses: jlumbroso/free-disk-space@main
-#        with:
-#          tool-cache: true
-#          android: true
-#          dotnet: true
-#          haskell: true
-#          large-packages: true
-#          docker-images: true
-#          swap-storage: false
+      - name: Free disk space
+        if: ${{ true }}
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
       - name: Set swap space
         uses: pierotofy/set-swap-space@master
         with:
@@ -50,14 +50,14 @@ jobs:
         uses: actions/cache@v5.0.3
         with:
           path: kernel_platform/clang
-          key: clang-r510928
+          key: clang-r522817
       - name: Setup Clang
         run: |
           mkdir -p kernel_platform/clang
           cd kernel_platform/clang
           if [ ! -d "${CLANG_DIR}" ]; then
             echo "Clang not found in cache. Downloading..."
-            git clone -n --depth=1 --filter=tree:0 -b main-kernel-build-2024 --single-branch \
+            git clone -n --depth=1 --filter=tree:0 -b main --single-branch \
               https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
             git sparse-checkout init --cone
             git sparse-checkout set ${CLANG_DIR}
@@ -69,27 +69,13 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rm -rf KernelSU kernelsu drivers/kernelsu
-          curl -LSs "https://raw.githubusercontent.com/WildKernels/Wild_KSU/wild/kernel/setup.sh" | bash -s stable
+          curl -LSs "https://raw.githubusercontent.com/WildKernels/Wild_KSU/wild/kernel/setup.sh" | bash -s 4e76373
       - name: Include SUSFS
         run: |
           HOME="$(pwd)"
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450
           patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
-      - name: Check supercalls.c for SUSFS functions
-        run: |
-          cd kernel_platform/xiaomi/sm8450
-          grep -n "susfs_set_i_state_on_external_dir" drivers/kernelsu/supercalls.c || echo "Function not found"
-      - name: Auto-fix SUSFS supercalls
-        run: |
-          cd kernel_platform/xiaomi/sm8450
-          FILE=drivers/kernelsu/supercalls.c
-
-          if grep -q "susfs_set_i_state_on_external_dir" $FILE; then
-            sed -i '/CMD_SUSFS_SET_ANDROID_DATA_ROOT_PATH/,/return 0;/d' $FILE
-            sed -i '/CMD_SUSFS_SET_SDCARD_ROOT_PATH/,/return 0;/d' $FILE
-            echo "Fixed SUSFS supercalls"
-          fi
       - name: Patch with custom configurations
         run: |
           cp -rvf aospa-vauxite-gki-kernel/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
