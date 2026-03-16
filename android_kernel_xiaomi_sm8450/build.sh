@@ -61,7 +61,6 @@ VDLKM_DIR="$KERNEL_DIR/vendor_dlkm"
 DEFCONFIG="gki_defconfig"
 DEFCONFIGS="vendor/waipio_GKI.config \
 vendor/xiaomi_GKI.config \
-vendor/susfs.config \
 vendor/westwood.config \
 vendor/debugfs.config"
 
@@ -252,12 +251,12 @@ echo_i "Generating config..."
 m $DEFCONFIG
 m ./scripts/kconfig/merge_config.sh $DEFCONFIGS vendor/${TARGET}_GKI.config
 scripts/config --file out/.config \
-    --set-str LOCALVERSION "-AOSPA-Marble-KSU-SUSFS" \
+    --set-str LOCALVERSION "-AOSPA-Marble-KSUNext-LKM" \
     -d LOCALVERSION_AUTO \
     -m CONFIG_KSU
 $NO_LTO && {
     scripts/config --file out/.config \
-        --set-str LOCALVERSION "-AOSPA-Marble-KSU-SUSFS-noLTO" \
+        --set-str LOCALVERSION "-AOSPA-Marble-KSUNext-LKM-noLTO" \
         -d LTO_CLANG_FULL -e LTO_NONE
     echo_i "Disabled LTO!"
 }
