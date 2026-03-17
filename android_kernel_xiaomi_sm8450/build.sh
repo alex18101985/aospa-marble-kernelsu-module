@@ -8,7 +8,7 @@ KP_ROOT="$(realpath ../..)"
 SRC_ROOT="$HOME/pa"
 TC_DIR="$KP_ROOT/clang/$CLANG_DIR"
 PREBUILTS_DIR="$KP_ROOT/prebuilts/kernel-build-tools/linux-x86"
-BRANCH="vauxite"
+BRANCH="$(git branch --show-current)"
 MODULES_REPO="sm8450-modules"
 DT_REPO="sm8450-devicetrees"
 
@@ -61,8 +61,6 @@ VDLKM_DIR="$KERNEL_DIR/vendor_dlkm"
 DEFCONFIG="gki_defconfig"
 DEFCONFIGS="vendor/waipio_GKI.config \
 vendor/xiaomi_GKI.config \
-vendor/personal.config \
-vendor/westwood.config \
 vendor/debugfs.config"
 
 MODULES_SRC="../$MODULES_REPO/qcom/opensource"
@@ -137,6 +135,14 @@ build_modules() {
     m modules
     rm -rf out/modules out/*.ko
     m INSTALL_MOD_PATH=modules INSTALL_MOD_STRIP=1 modules_install
+
+    ksu_path="$(find $modules_out -name 'kernelsu.ko' -print -quit)"
+    if [ -n "$ksu_path" ]; then
+        mv "$ksu_path" out
+        echo_i "Copied to out/kernelsu.ko"
+    else
+        echo_e "Unable to locate ksu module!"
+    fi
 
     echo_i "Building techpack modules..."
     for module in $MODULES; do
@@ -232,6 +238,7 @@ build_dtbs() {
 ##
 
 export PATH="$TC_DIR/bin:$PREBUILTS_DIR/bin:$PATH"
+export LOCALVERSION="$(get_trees_rev)"
 
 $DO_CLEAN && {
     rm -rf out $MODULES_REPO
@@ -244,11 +251,12 @@ echo_i "Generating config..."
 m $DEFCONFIG
 m ./scripts/kconfig/merge_config.sh $DEFCONFIGS vendor/${TARGET}_GKI.config
 scripts/config --file out/.config \
-    --set-str LOCALVERSION "-AOSPA-Marble-GKI-KSUNext-SUSFS" \
-    -d LOCALVERSION_AUTO
+    --set-str LOCALVERSION "-$BRANCH" \
+    -d LOCALVERSION_AUTO \
+    -m CONFIG_KSU
 $NO_LTO && {
     scripts/config --file out/.config \
-        --set-str LOCALVERSION "-AOSPA-Marble-GKI-KSUNext-SUSFS-noLTO" \
+        --set-str LOCALVERSION "-${BRANCH}-nolto" \
         -d LTO_CLANG_FULL -e LTO_NONE
     echo_i "Disabled LTO!"
 }
