@@ -1,6 +1,6 @@
 # AOSPA Marble Kernel
 ## Differences from stock AOSPA kernel:
-- Added MamboSU (LKM)
+- Added KowSU (LKM)
 - Added Westwood TCP (set as default)
 
 <p>&nbsp;</p>
