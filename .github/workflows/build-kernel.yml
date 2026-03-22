@@ -106,7 +106,7 @@ jobs:
           zip -r9 "../kernel.zip" *
       - name: Generate release tag
         id: tag
-        run: echo "release_tag=AOSPA_Marble_GKI_KSUNext_$(date +'%Y.%m.%d_%H%M')" >> "$GITHUB_OUTPUT"
+        run: echo "release_tag=AOSPA_Marble_GKI_KSU_SUSFS_$(date +'%Y.%m.%d_%H%M')" >> "$GITHUB_OUTPUT"
       - name: Create release
         uses: softprops/action-gh-release@v2.6.1
         with:
