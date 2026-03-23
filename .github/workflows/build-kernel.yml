@@ -1,4 +1,4 @@
-name: AOSPA Marble GKI (KernelSU + SUSFS)
+name: AOSPA Marble GKI (KSUNext + SUSFS)
 on:
   workflow_dispatch:
 env:
@@ -63,11 +63,11 @@ jobs:
           else
             echo "Using cached ${CLANG_DIR}"
           fi
-      - name: Include KernelSU
+      - name: Include KernelSU Next
         run: |
           cd kernel_platform/xiaomi/sm8450
-          rm -rf KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s 61c6313
+          rm -rf KernelSU kernelsu drivers/kernelsu
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
       - name: Include SUSFS
         run: |
           HOME="$(pwd)"
@@ -76,12 +76,6 @@ jobs:
           patch -p1 < 10_enable_susfs_for_ksu.patch
           cd ..
           patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
-      - name: Include unofficial KernelSU manager signature (backslashxx)
-        run: |
-          FILE="kernel_platform/xiaomi/sm8450/KernelSU/kernel/apk_sign.c"
-          sed -i '/[[:space:]]*return check_v2_signature(path, EXPECTED_SIZE, EXPECTED_HASH);/c \
-              return check_v2_signature(path, EXPECTED_SIZE, EXPECTED_HASH) \
-                  || check_v2_signature(path, 0x363, "4359c171f32543394cbc23ef908c4bb94cad7c8087002ba164c8230948c21549");' "$FILE"
       - name: Patch with custom configuration
         run: |
           cp -rvf aospa-marble-gki-kernel/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
@@ -103,7 +97,7 @@ jobs:
           zip -r9 "../kernel.zip" *
       - name: Generate release tag
         id: tag
-        run: echo "release_tag=AOSPA_Marble_GKI_KSU_SUSFS_$(date +'%Y.%m.%d_%H%M')" >> "$GITHUB_OUTPUT"
+        run: echo "release_tag=AOSPA_Marble_GKI_KSUNext_SUSFS_$(date +'%Y.%m.%d_%H%M')" >> "$GITHUB_OUTPUT"
       - name: Create release
         uses: softprops/action-gh-release@v2.6.1
         with:
