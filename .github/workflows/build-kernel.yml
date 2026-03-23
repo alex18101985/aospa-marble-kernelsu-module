@@ -7,17 +7,17 @@ jobs:
   build-kernel:
     runs-on: ubuntu-22.04
     steps:
-      - name: Free disk space
-        if: ${{ true }}
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: true
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: false
+#      - name: Free disk space
+#        if: ${{ true }}
+#        uses: jlumbroso/free-disk-space@main
+#        with:
+#          tool-cache: true
+#          android: true
+#          dotnet: true
+#          haskell: true
+#          large-packages: true
+#          docker-images: true
+#          swap-storage: false
       - name: Set swap space
         uses: pierotofy/set-swap-space@master
         with:
@@ -66,7 +66,7 @@ jobs:
       - name: Include KernelSU Next
         run: |
           cd kernel_platform/xiaomi/sm8450
-          rm -rf KernelSU kernelsu drivers/kernelsu
+          rm -rf KernelSU-Next
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s dev
       - name: Patch with custom configuration
         run: |
