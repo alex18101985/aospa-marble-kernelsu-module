@@ -79,7 +79,7 @@ jobs:
       - name: Include KernelSU Next manager signature
         run: |
           set -e
-          FILE="kernel_platform/xiaomi/sm8450/KernelSU/kernel/apk_sign.c"
+          FILE="kernel_platform/xiaomi/sm8450/KernelSU/kernel/manager/apk_sign.c"
           SIG='check_v2_signature(path, 0x3e6, "79e590113c4c4c0c222978e413a5faa801666957b1212a328e46c00c69821bf7")'
           echo "[*] Checking if signature already exists..."
           if grep -q "$SIG" "$FILE"; then
