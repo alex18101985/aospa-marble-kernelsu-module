@@ -67,7 +67,7 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/KOWX712/KernelSU/master/kernel/setup.sh" | bash -s v3.2.2
+          curl -LSs "https://raw.githubusercontent.com/KOWX712/KernelSU/main/kernel/setup.sh" | bash -s master
       - name: Patch with custom configuration
         run: |
           cp -rvf aospa-marble-kernel/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
