@@ -138,12 +138,12 @@ build_modules() {
     rm -rf out/modules out/*.ko
     m INSTALL_MOD_PATH=modules INSTALL_MOD_STRIP=1 modules_install
 
-    ksu_path="$(find $modules_out -name 'kernelsu.ko' -print -quit)"
+    ksu_path="$(find $modules_out -name 'kowsu.ko' -print -quit)"
     if [ -n "$ksu_path" ]; then
         mv "$ksu_path" out
-        echo_i "Copied to out/kernelsu.ko"
+        echo_i "Copied to out/kowsu.ko"
     else
-        echo_e "Unable to locate ksu module!"
+        echo_e "Unable to locate kowsu module!"
     fi
 
     echo_i "Building techpack modules..."
