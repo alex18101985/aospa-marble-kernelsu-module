@@ -66,19 +66,8 @@ jobs:
       - name: Include KernelSU
         run: |
           cd kernel_platform/xiaomi/sm8450
-          rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-      - name: Fix KernelSU app_profile include
-        run: |
-          cd kernel_platform/xiaomi/sm8450
-          if [ -d "drivers/kernelsu" ]; then
-            echo "Patching app_profile include paths..."
-            find drivers/kernelsu \( -name "*.c" -o -name "*.h" \) \
-              -exec sed -i 's#"uapi/app_profile.h"#"../uapi/app_profile.h"#g' {} +
-            echo "Patch applied"
-          else
-            echo "KernelSU not found, skipping"
-          fi  
+          rm -rf KernelSU
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
       - name: Patch with custom configuration
         run: |
           cp -rvf aospa-marble-kernel/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
