@@ -1,10 +1,10 @@
-name: build-kowsu-module
+name: build-kernelsu-module
 on:
   workflow_dispatch:
 env:
   CLANG_DIR: clang-r510928
 jobs:
-  build-kowsu-module:
+  build-kernelsu-module:
     runs-on: ubuntu-22.04
     steps:
 #      - name: Free disk space
