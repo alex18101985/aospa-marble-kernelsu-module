@@ -66,7 +66,7 @@ jobs:
       - name: Include KowSU
         run: |
           cd kernel_platform/xiaomi/sm8450
-          rmdir KernelSU
+          rm -rf KernelSU
           curl -LSs "https://raw.githubusercontent.com/KOWX712/KernelSU/master/kernel/setup.sh" | bash -s master
       - name: Patch with custom configuration
         run: |
