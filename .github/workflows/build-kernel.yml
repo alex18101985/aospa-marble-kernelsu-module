@@ -96,9 +96,3 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             kernel.zip
-      - name: Upload kernel artifact
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: kernel
-          path: AnyKernel3-master/*
-          compression-level: 9
