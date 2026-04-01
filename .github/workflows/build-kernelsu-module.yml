@@ -1,1 +1,86 @@
-
+name: build-kernelsu-module
+on:
+  workflow_dispatch:
+env:
+  CLANG_DIR: clang-r510928
+jobs:
+  build-kernelsu-module:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Free disk space
+        if: ${{ true }}
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
+      - name: Set swap space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+      - name: Increase file limit
+        run: |
+          sudo sysctl -w vm.swappiness=100
+      - name: Check repository
+        uses: actions/checkout@v6.0.2
+        with:
+          path: aospa-marble-kernel
+      - name: Setup Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: 'pypy3.11'
+      - name: Setup build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc device-tree-compiler
+          sudo curl --create-dirs -o /usr/local/bin/repo -L https://storage.googleapis.com/git-repo-downloads/repo
+          sudo chmod a+rx /usr/local/bin/repo
+      - name: Clone repo and sync
+        run: |
+          repo init -u https://github.com/alex18101985/aospa-marble-kernel -b "$(git -C aospa-marble-kernel branch --show-current)" -m manifest.xml --depth=1
+          repo sync
+          mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
+      - name: Cache Clang
+        uses: actions/cache@v5.0.4
+        with:
+          path: kernel_platform/clang
+          key: clang-r510928
+      - name: Setup Clang
+        run: |
+          mkdir -p kernel_platform/clang
+          cd kernel_platform/clang
+          if [ ! -d "${CLANG_DIR}" ]; then
+            echo "Clang not found in cache. Downloading..."
+            git clone -n --depth=1 --filter=tree:0 -b main-kernel-build-2024 --single-branch \
+              https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
+            git sparse-checkout init --cone
+            git sparse-checkout set ${CLANG_DIR}
+            git checkout
+          else
+            echo "Using cached ${CLANG_DIR}"
+          fi
+      - name: Include KernelSU
+        run: |
+          cd kernel_platform/xiaomi/sm8450
+          rmdir KernelSU
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+      - name: Patch with custom configuration
+        run: |
+          cp -rvf aospa-marble-kernel/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
+          cd kernel_platform/xiaomi/sm8450
+          patch -p1 < no-strict-error.patch
+      - name: Build KernelSU module
+        run: |
+          cd kernel_platform/xiaomi/sm8450
+          export PATH=$PWD/kernel_platform/clang/${CLANG_DIR}/bin:$PATH
+          ./build.sh marble --only-modules
+      - name: Upload KernelSU module artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: kernelsu-module
+          path: kernel_platform/xiaomi/sm8450/out/kernelsu.ko
+          compression-level: 9
