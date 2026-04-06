@@ -1,6 +1,4 @@
-# AOSPA Marble Kernel
-## Differences from stock AOSPA kernel:
-- Added Westwood TCP (set as default)
+# AOSPA Marble KernelSU Module
 
 <p>&nbsp;</p>
 
