@@ -2,10 +2,10 @@ name: build-kernelsu-module
 on:
   workflow_dispatch:
 env:
-  CLANG_DIR: clang-r510928
+  CLANG_DIR: clang-r596125
 jobs:
   build-kernelsu-module:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Free disk space
         if: ${{ true }}
@@ -48,14 +48,14 @@ jobs:
         uses: actions/cache@v5.0.4
         with:
           path: kernel_platform/clang
-          key: clang-r510928
+          key: clang-r596125
       - name: Setup Clang
         run: |
           mkdir -p kernel_platform/clang
           cd kernel_platform/clang
           if [ ! -d "${CLANG_DIR}" ]; then
             echo "Clang not found in cache. Downloading..."
-            git clone -n --depth=1 --filter=tree:0 -b main-kernel-build-2024 --single-branch \
+            git clone -n --depth=1 --filter=tree:0 -b main-kernel --single-branch \
               https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
             git sparse-checkout init --cone
             git sparse-checkout set ${CLANG_DIR}
