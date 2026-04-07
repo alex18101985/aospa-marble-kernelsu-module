@@ -1,0 +1,89 @@
+name: build-kernel-image
+on:
+  workflow_dispatch:
+env:
+  CLANG_DIR: clang-r596125
+jobs:
+  build-kernel-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free disk space
+        if: ${{ true }}
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
+      - name: Set swap space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+      - name: Increase file limit
+        run: |
+          sudo sysctl -w vm.swappiness=100
+      - name: Check repository
+        uses: actions/checkout@v6.0.2
+        with:
+          path: aospa-marble-kernelsu-module
+      - name: Setup Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: 'pypy3.11'
+      - name: Setup build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc device-tree-compiler
+          sudo curl --create-dirs -o /usr/local/bin/repo -L https://storage.googleapis.com/git-repo-downloads/repo
+          sudo chmod a+rx /usr/local/bin/repo
+      - name: Clone repo and sync
+        run: |
+          repo init -u https://github.com/alex18101985/aospa-marble-kernelsu-module -b "$(git -C aospa-marble-kernelsu-module branch --show-current)" -m manifest.xml --depth=1
+          repo sync
+          mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
+      - name: Cache Clang
+        uses: actions/cache@v5.0.3
+        with:
+          path: kernel_platform/clang
+          key: clang-r596125
+      - name: Setup Clang
+        run: |
+          mkdir -p kernel_platform/clang
+          cd kernel_platform/clang
+          if [ ! -d "${CLANG_DIR}" ]; then
+            echo "Clang not found in cache. Downloading..."
+            git clone -n --depth=1 --filter=tree:0 -b main-kernel --single-branch \
+              https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
+            git sparse-checkout init --cone
+            git sparse-checkout set ${CLANG_DIR}
+            git checkout
+          else
+            echo "Using cached ${CLANG_DIR}"
+          fi
+      - name: Fix Clang warnings
+        run: |
+          cp -rf aospa-marble-kernelsu-module/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
+          cd kernel_platform/xiaomi/sm8450
+          curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796d4f85c5979678055438185cbd.patch > clang.patch
+          patch -p1 < clang.patch
+          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f4ae922da12b91d0b7a8109ba2851a44c61b0ba6.patch > clang.patch
+          patch -p1 < clang.patch
+          cd ..
+          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/3e043c16430a95f6d328f5396c14ec18a52ab10a.patch > clang.patch
+          sed -i 's/drivers/sm8450\/drivers/g' clang.patch
+          sed -i 's/techpack\/display/sm8450-modules\/qcom\/opensource\/display-drivers/g' clang.patch
+          patch -p1 < clang.patch
+      - name: Build kernel image
+        run: |
+          cd kernel_platform/xiaomi/sm8450
+          export PATH=$PWD/kernel_platform/clang/${CLANG_DIR}/bin:$PATH
+          ./build.sh marble --only-kernel
+      - name: Upload kernel image artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: kernel-image
+          path: kernel_platform/device/xiaomi/marble-kernel/Image
+          compression-level: 9
