@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Free disk space
-        uses: endersonmenezes/free-disk-space@v3.2.2
+        uses: endersonmenezes/free-disk-space@main
         with:
           remove_android: true
           remove_dotnet: true
