@@ -42,7 +42,7 @@ jobs:
       - name: Clone repo and sync
         run: |
           repo init -u https://github.com/alex18101985/aospa-marble-kernel -b "$(git -C aospa-marble-kernel branch --show-current)" -m manifest.xml --depth=1
-          repo sync -j32
+          repo sync
           mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
       - name: Cache Clang
         uses: actions/cache@v5.0.4
