@@ -61,6 +61,9 @@ jobs:
           fi
           tar -xf ${LLVM_VERSION}-Linux-X64.tar.xz
           export PATH=$PWD/${LLVM_VERSION}/bin:$PATH
+          export LD_LLD=$PWD/${LLVM_VERSION}/bin/ld.lld
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CLANG_TRIPLE=aarch64-linux-gnu-
           clang --version
       - name: Fix Clang warnings
         run: |
