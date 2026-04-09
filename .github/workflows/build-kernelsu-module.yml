@@ -2,7 +2,7 @@ name: build-kernelsu-module
 on:
   workflow_dispatch:
 env:
-  CLANG_DIR: clang-r584948b
+  CLANG_DIR: clang-r596125
 jobs:
   build-kernelsu-module:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v5.0.4
         with:
           path: kernel_platform/clang
-          key: clang-r584948b
+          key: clang-r596125
       - name: Setup Clang
         run: |
           mkdir -p kernel_platform/clang
