@@ -79,7 +79,6 @@ jobs:
       - name: Build kernel image
         run: |
           cd kernel_platform/xiaomi/sm8450
-          export PATH=$PWD/kernel_platform/clang/${CLANG_DIR}/bin:$PATH
           ./build.sh marble --only-kernel
       - name: Upload kernel image artifact
         uses: actions/upload-artifact@v7.0.0
