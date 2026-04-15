@@ -3,7 +3,7 @@
 - Added Westwood TCP (set as default)
 - Built with latest Clang
 
-# Include workflow file to build KernelSU module
+# Include workflow file to build KernelSU / KernelSU Next module
 
 <p>&nbsp;</p>
 
