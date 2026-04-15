@@ -49,7 +49,7 @@ jobs:
           repo sync
           mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
       - name: Cache Clang
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: kernel_platform/clang
           key: clang-r596125
@@ -91,7 +91,7 @@ jobs:
           export PATH=$PWD/kernel_platform/clang/${CLANG_DIR}/bin:$PATH
           ./build.sh marble --only-modules
       - name: Upload KernelSU module artifact
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: kernelsu-module
           path: kernel_platform/xiaomi/sm8450/out/kernelsu.ko
